@@ -1,0 +1,41 @@
+{
+  "builders": [{
+    "type": "amazon-ebs",
+    "region": "us-west-2",
+    "source_ami": "ami-0d2916f75ba702fce",
+    "instance_type": "t3.micro",
+    "ssh_username": "centos",
+    "ami_groups": "all",
+    "ami_name": "jenkins-slave",
+    "force_deregister": true,
+    "force_delete_snapshot": true,
+    "launch_block_device_mappings": [
+      {
+        "device_name": "/dev/sda1",
+        "volume_type": "gp2",
+        "volume_size": "16",
+        "delete_on_termination": true
+      }
+    ],
+    "tags": {
+      "Name" : "Jenkins-Slave",
+      "Created_By" : "Packer",
+      "Base_AMI_Name": "{{ .SourceAMIName }}"
+    }
+  }],
+
+  "provisioners": [
+    {
+      "type":  "shell",
+      "inline": [
+        "curl -s https://raw.githubusercontent.com/linuxautomations/labautomation/master/tools/nodejs/install.sh | sudo bash",
+        "curl -s https://raw.githubusercontent.com/linuxautomations/labautomation/master/tools/docker-stack/install.sh | sudo bash ",
+        "curl -s https://raw.githubusercontent.com/linuxautomations/labautomation/master/tools/go/install.sh | sudo bash ",
+        "curl -s https://raw.githubusercontent.com/linuxautomations/labautomation/master/tools/k8-client-stack/install.sh | sudo bash",
+        "curl -s https://raw.githubusercontent.com/linuxautomations/labautomation/master/tools/maven/install.sh | sudo bash ",
+        "curl -s https://raw.githubusercontent.com/linuxautomations/labautomation/master/tools/terraform/install.sh | sudo bash",
+        "sudo yum install mariadb -y"
+      ]
+    }]
+}
+
